@@ -1,0 +1,20 @@
+{
+  "name": "qa-ai-playground",
+  "version": "1.0.0",
+  "description": "A testing ground website for QA AI software",
+  "private": true,
+  "scripts": {
+    "install:client": "cd client && yarn install",
+    "install:server": "cd server && yarn install",
+    "install:all": "yarn install:client && yarn install:server",
+    "dev:client": "cd client && yarn dev",
+    "dev:server": "cd server && yarn dev",
+    "dev": "concurrently \"yarn dev:server\" \"yarn dev:client\"",
+    "build:client": "cd client && yarn build",
+    "build:server": "cd server && yarn build",
+    "build": "yarn build:server && yarn build:client"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
