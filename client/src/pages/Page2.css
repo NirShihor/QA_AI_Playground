@@ -1,0 +1,64 @@
+.dragDropContainer {
+  display: flex;
+  gap: 2rem;
+  width: 100%;
+  max-width: 1200px;
+  margin-top: 2rem;
+}
+
+.frame {
+  flex: 1;
+  min-height: 400px;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  padding: 1.5rem;
+  background-color: #f9f9f9;
+  transition: border-color 0.3s, background-color 0.3s;
+}
+
+.frame:hover {
+  border-color: #007bff;
+  background-color: #f0f8ff;
+}
+
+.frame h3 {
+  margin: 0 0 1rem 0;
+  color: #333;
+  font-size: 1.3rem;
+}
+
+.blocksContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 300px;
+}
+
+.block {
+  padding: 1.5rem;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  cursor: move;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s, box-shadow 0.2s;
+  user-select: none;
+}
+
+.block:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.block:active {
+  cursor: grabbing;
+  opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+  .dragDropContainer {
+    flex-direction: column;
+  }
+}
+
