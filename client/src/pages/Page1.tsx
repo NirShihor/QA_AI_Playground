@@ -38,6 +38,7 @@ const Page1 = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    alert(`Form submitted successfully for ${formData.firstName} ${formData.lastName}!`);
     setIsPopupOpen(false);
     setFormData({
       firstName: '',
@@ -48,7 +49,7 @@ const Page1 = () => {
       county: '',
       country: '',
       phoneNumber: '',
-      email: ''
+      email: formData.email  // Bug: email field is not cleared
     });
   };
 
