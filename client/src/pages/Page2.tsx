@@ -31,17 +31,27 @@ const Page2 = () => {
     e.preventDefault();
     if (!draggedBlock) return;
 
+    const isYellowBlock = draggedBlock.color === '#FFE66D';
+
     if (targetFrame === 'frame1') {
-      const isInFrame1 = frame1Blocks.some(b => b.id === draggedBlock.id);
-      if (!isInFrame1) {
-        setFrame1Blocks([...frame1Blocks, draggedBlock]);
+      if (isYellowBlock) {
         setFrame2Blocks(frame2Blocks.filter(b => b.id !== draggedBlock.id));
+      } else {
+        const isInFrame1 = frame1Blocks.some(b => b.id === draggedBlock.id);
+        if (!isInFrame1) {
+          setFrame1Blocks([...frame1Blocks, draggedBlock]);
+          setFrame2Blocks(frame2Blocks.filter(b => b.id !== draggedBlock.id));
+        }
       }
     } else {
-      const isInFrame2 = frame2Blocks.some(b => b.id === draggedBlock.id);
-      if (!isInFrame2) {
-        setFrame2Blocks([...frame2Blocks, draggedBlock]);
+      if (isYellowBlock) {
         setFrame1Blocks(frame1Blocks.filter(b => b.id !== draggedBlock.id));
+      } else {
+        const isInFrame2 = frame2Blocks.some(b => b.id === draggedBlock.id);
+        if (!isInFrame2) {
+          setFrame2Blocks([...frame2Blocks, draggedBlock]);
+          setFrame1Blocks(frame1Blocks.filter(b => b.id !== draggedBlock.id));
+        }
       }
     }
     setDraggedBlock(null);

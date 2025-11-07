@@ -30,6 +30,9 @@ const Page1 = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    if (name === 'email') {
+      return;
+    }
     setFormData(prev => ({
       ...prev,
       [name]: value

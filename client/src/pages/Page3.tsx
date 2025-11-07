@@ -10,7 +10,7 @@ const Page3 = () => {
       <button onClick={() => setIsPopupOpen(true)}>Open Popup</button>
       <Popup
         isOpen={isPopupOpen}
-        onClose={() => setIsPopupOpen(false)}
+        onClose={() => {}}
         title="Page 3 Popup"
         content="This is a popup from Page 3. Another variation for comprehensive testing."
       />
