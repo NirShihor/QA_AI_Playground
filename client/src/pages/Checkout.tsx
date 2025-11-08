@@ -52,7 +52,8 @@ const Checkout = () => {
     phone: '',
     address: '',
     city: '',
-    country: ''
+    country: '',
+    deliveryDate: ''
   });
 
   const getTotal = () => {
@@ -108,7 +109,7 @@ const Checkout = () => {
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -123,7 +124,8 @@ const Checkout = () => {
       phone: '',
       address: '',
       city: '',
-      country: ''
+      country: '',
+      deliveryDate: ''
     });
     setPostalCode('');
     setPostalCodeError('');
@@ -306,6 +308,17 @@ const Checkout = () => {
                 value={formData.country}
                 onChange={handleInputChange}
                 required 
+              />
+            </div>
+            <div className="formGroup">
+              <label>Delivery Date</label>
+              <input 
+                type="date" 
+                name="deliveryDate"
+                value={formData.deliveryDate}
+                onChange={handleInputChange}
+                required 
+                min={new Date().toISOString().split('T')[0]}
               />
             </div>
             <div className="formActions">

@@ -17,7 +17,7 @@ const MenuBar = () => {
           Page 2
         </Link>
         <Link to="/page3" className={location.pathname === '/page3' ? 'active' : ''}>
-          Page 3
+          Shop
         </Link>
         <Link to="/about" className={location.pathname === '/about' ? 'active' : ''}>
           About Us

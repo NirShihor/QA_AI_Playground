@@ -1,6 +1,16 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Page3.css';
+import macbookImage from '../assets/images/macbook.png';
+import mouseImage from '../assets/images/mouse.png';
+import keyboardImage from '../assets/images/keyboard.png';
+import monitorImage from '../assets/images/monitor.png';
+import headphonesImage from '../assets/images/headphones.png';
+import webcamImage from '../assets/images/webcam.png';
+import flashdriveImage from '../assets/images/flashdrive.png';
+import externalDriveImage from '../assets/images/external drive.png';
+import phoneImage from '../assets/images/phone.png';
+import tabletImage from '../assets/images/tablet.png';
 
 interface Product {
   id: number;
@@ -27,6 +37,22 @@ const Page3 = () => {
     { id: 9, name: 'Tablet', price: 399.99 },
     { id: 10, name: 'Smartphone', price: 699.99 }
   ];
+
+  const getProductImage = (productName: string): string | undefined => {
+    const imageMap: { [key: string]: string } = {
+      'Laptop': macbookImage,
+      'Mouse': mouseImage,
+      'Keyboard': keyboardImage,
+      'Monitor': monitorImage,
+      'Headphones': headphonesImage,
+      'Webcam': webcamImage,
+      'USB Drive': flashdriveImage,
+      'External Hard Drive': externalDriveImage,
+      'Tablet': phoneImage,
+      'Smartphone': tabletImage
+    };
+    return imageMap[productName];
+  };
 
   const [cart, setCart] = useState<CartItem[]>([]);
 
@@ -71,15 +97,21 @@ const Page3 = () => {
         <div className="productsSection">
           <h2>Products</h2>
           <div className="productsGrid">
-            {products.map(product => (
-              <div key={product.id} className="productCard">
-                <h3>{product.name}</h3>
-                <p className="price">£{product.price.toFixed(2)}</p>
-                <button onClick={() => addToCart(product)} className="addToCartBtn">
-                  Add to Cart
-                </button>
-              </div>
-            ))}
+            {products.map(product => {
+              const productImage = getProductImage(product.name);
+              return (
+                <div key={product.id} className="productCard">
+                  {productImage && (
+                    <img src={productImage} alt={product.name} className="productImage" />
+                  )}
+                  <h3>{product.name}</h3>
+                  <p className="price">£{product.price.toFixed(2)}</p>
+                  <button onClick={() => addToCart(product)} className="addToCartBtn">
+                    Add to Cart
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </div>
         <div className="cartSection">

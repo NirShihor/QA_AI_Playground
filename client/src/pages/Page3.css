@@ -45,6 +45,16 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
+  height: 100%;
+  justify-content: space-between;
+}
+
+.productImage {
+  width: 100%;
+  max-width: 150px;
+  height: auto;
+  margin-bottom: 1rem;
+  object-fit: contain;
 }
 
 .productCard h3 {
