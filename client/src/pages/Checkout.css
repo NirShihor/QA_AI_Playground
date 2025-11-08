@@ -63,12 +63,26 @@
   color: #007bff;
 }
 
+.orderSummaryRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.discountRow {
+  color: #28a745;
+  font-weight: 500;
+}
+
 .orderTotal {
   padding-top: 1rem;
   border-top: 2px solid #ddd;
   text-align: right;
   font-size: 1.3rem;
   color: #333;
+  margin-top: 0.5rem;
 }
 
 .checkoutForm {

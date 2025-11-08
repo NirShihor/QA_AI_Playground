@@ -48,6 +48,7 @@ const Checkout = () => {
   const cart: CartItem[] = location.state?.cart || [];
   const [postalCode, setPostalCode] = useState('');
   const [postalCodeError, setPostalCodeError] = useState('');
+  const [couponCode, setCouponCode] = useState('');
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -82,6 +83,39 @@ const Checkout = () => {
       }
       return total;
     }, 0);
+  };
+
+  const getDiscountPercent = (code: string): number => {
+    const upperCode = code.toUpperCase().trim();
+    if (upperCode === 'REAL10') {
+      return 10;
+    } else if (upperCode === 'REAL20') {
+      return 20;
+    } else if (upperCode === 'REAL30') {
+      return 30;
+    }
+    return 0;
+  };
+
+  const getDiscount = (): number => {
+    if (!couponCode.trim()) {
+      return 0;
+    }
+    const upperCode = couponCode.toUpperCase().trim();
+    
+    if (upperCode === 'REAL30') {
+      return 12;
+    }
+    
+    const discountPercent = getDiscountPercent(couponCode);
+    if (discountPercent === 0) {
+      return 0;
+    }
+    return (getTotal() * discountPercent) / 100;
+  };
+
+  const getFinalTotal = (): number => {
+    return getTotal() - getDiscount();
   };
 
   const extractOutwardCode = (postcode: string): string => {
@@ -146,6 +180,7 @@ const Checkout = () => {
     setDeliveryDate(null);
     setPostalCode('');
     setPostalCodeError('');
+    setCouponCode('');
   };
 
   const handlePlaceOrder = async (e: React.FormEvent) => {
@@ -188,8 +223,11 @@ const Checkout = () => {
         postalCode: postalCode,
         country: formData.country,
         deliveryDate: deliveryDate ? deliveryDate.toISOString().split('T')[0] : '',
+        couponCode: couponCode.trim() || undefined,
+        discount: getDiscount(),
         items: items,
-        total: getTotal()
+        subtotal: getTotal(),
+        total: getFinalTotal()
       };
 
       console.log('Sending order data:', orderData);
@@ -250,8 +288,20 @@ const Checkout = () => {
               );
             })}
           </div>
-          <div className="orderTotal">
-            <strong>Total: £{getTotal().toFixed(2)}</strong>
+          <div className="orderSummary">
+            <div className="orderSummaryRow">
+              <span>Subtotal:</span>
+              <span>£{getTotal().toFixed(2)}</span>
+            </div>
+            {getDiscount() > 0 && (
+              <div className="orderSummaryRow discountRow">
+                <span>Discount ({getDiscountPercent(couponCode)}%):</span>
+                <span>-£{getDiscount().toFixed(2)}</span>
+              </div>
+            )}
+            <div className="orderTotal">
+              <strong>Total: £{getFinalTotal().toFixed(2)}</strong>
+            </div>
           </div>
         </div>
         <div className="checkoutForm">
@@ -326,6 +376,15 @@ const Checkout = () => {
                 value={formData.country}
                 onChange={handleInputChange}
                 required 
+              />
+            </div>
+            <div className="formGroup">
+              <label>Discount Coupon (optional)</label>
+              <input 
+                type="text" 
+                value={couponCode}
+                onChange={(e) => setCouponCode(e.target.value)}
+                placeholder="Enter coupon code"
               />
             </div>
             <div className="formGroup">
