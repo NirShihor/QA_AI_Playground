@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import './Checkout.css';
 
 interface Product {
@@ -55,6 +57,20 @@ const Checkout = () => {
     country: '',
     deliveryDate: ''
   });
+  const [deliveryDate, setDeliveryDate] = useState<Date | null>(null);
+
+  const isSecondOrFourthMonday = (date: Date): boolean => {
+    const dayOfWeek = date.getDay();
+    
+    if (dayOfWeek !== 1) {
+      return false;
+    }
+    
+    const day = date.getDate();
+    const mondayOfMonth = Math.floor((day - 1) / 7) + 1;
+    
+    return mondayOfMonth === 2 || mondayOfMonth === 4;
+  };
 
   const getTotal = () => {
     if (!cart || cart.length === 0) {
@@ -127,6 +143,7 @@ const Checkout = () => {
       country: '',
       deliveryDate: ''
     });
+    setDeliveryDate(null);
     setPostalCode('');
     setPostalCodeError('');
   };
@@ -170,6 +187,7 @@ const Checkout = () => {
         city: formData.city,
         postalCode: postalCode,
         country: formData.country,
+        deliveryDate: deliveryDate ? deliveryDate.toISOString().split('T')[0] : '',
         items: items,
         total: getTotal()
       };
@@ -312,13 +330,25 @@ const Checkout = () => {
             </div>
             <div className="formGroup">
               <label>Delivery Date</label>
-              <input 
-                type="date" 
-                name="deliveryDate"
-                value={formData.deliveryDate}
-                onChange={handleInputChange}
-                required 
-                min={new Date().toISOString().split('T')[0]}
+              <DatePicker
+                selected={deliveryDate}
+                onChange={(date: Date | null) => {
+                  if (date && isSecondOrFourthMonday(date)) {
+                    return;
+                  }
+                  setDeliveryDate(date);
+                  if (date) {
+                    setFormData(prev => ({
+                      ...prev,
+                      deliveryDate: date.toISOString().split('T')[0]
+                    }));
+                  }
+                }}
+                minDate={new Date()}
+                dateFormat="dd/MM/yyyy"
+                placeholderText="Select delivery date"
+                required
+                className="datePickerInput"
               />
             </div>
             <div className="formActions">
