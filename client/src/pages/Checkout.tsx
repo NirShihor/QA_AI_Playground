@@ -1,0 +1,327 @@
+import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import './Checkout.css';
+
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+}
+
+interface CartItem {
+  product: Product;
+  quantity: number;
+}
+
+const allowedPostcodeAreas = [
+  'SW', 'SE', 'NW', 'N', 'E', 'W', 'EC', 'WC',
+  'M',
+  'B',
+  'L',
+  'LS',
+  'G',
+  'EH',
+  'BS',
+  'S',
+  'NE'
+];
+
+const cityNames: { [key: string]: string } = {
+  'SW': 'London', 'SE': 'London', 'NW': 'London', 'N': 'London', 
+  'E': 'London', 'W': 'London', 'EC': 'London', 'WC': 'London',
+  'M': 'Manchester',
+  'B': 'Birmingham',
+  'L': 'Liverpool',
+  'LS': 'Leeds',
+  'G': 'Glasgow',
+  'EH': 'Edinburgh',
+  'BS': 'Bristol',
+  'S': 'Sheffield',
+  'NE': 'Newcastle'
+};
+
+const Checkout = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const cart: CartItem[] = location.state?.cart || [];
+  const [postalCode, setPostalCode] = useState('');
+  const [postalCodeError, setPostalCodeError] = useState('');
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    phone: '',
+    address: '',
+    city: '',
+    country: ''
+  });
+
+  const getTotal = () => {
+    if (!cart || cart.length === 0) {
+      return 0;
+    }
+    return cart.reduce((total, item) => {
+      if (item && item.product) {
+        return total + item.product.price * item.quantity;
+      }
+      return total;
+    }, 0);
+  };
+
+  const extractOutwardCode = (postcode: string): string => {
+    const trimmed = postcode.trim().toUpperCase();
+    const parts = trimmed.split(' ');
+    if (parts.length > 0) {
+      return parts[0];
+    }
+    return trimmed.substring(0, 4);
+  };
+
+  const validatePostcode = (postcode: string): boolean => {
+    if (!postcode.trim()) {
+      setPostalCodeError('Postal code is required');
+      return false;
+    }
+
+    const outwardCode = extractOutwardCode(postcode);
+    
+    const sortedAreas = [...allowedPostcodeAreas].sort((a, b) => b.length - a.length);
+    
+    for (const area of sortedAreas) {
+      if (outwardCode.startsWith(area)) {
+        setPostalCodeError('');
+        return true;
+      }
+    }
+
+    const allowedCities = Array.from(new Set(Object.values(cityNames))).join(', ');
+    setPostalCodeError(`Delivery is only available to: ${allowedCities}`);
+    return false;
+  };
+
+  const handlePostalCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setPostalCode(value);
+    if (value.trim()) {
+      validatePostcode(value);
+    } else {
+      setPostalCodeError('');
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const clearForm = () => {
+    setFormData({
+      fullName: '',
+      email: '',
+      phone: '',
+      address: '',
+      city: '',
+      country: ''
+    });
+    setPostalCode('');
+    setPostalCodeError('');
+  };
+
+  const handlePlaceOrder = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validatePostcode(postalCode)) {
+      return;
+    }
+
+    if (!cart || cart.length === 0) {
+      alert('Your cart is empty. Please add items to your cart first.');
+      return;
+    }
+
+    const outwardCode = extractOutwardCode(postalCode);
+    if (outwardCode.startsWith('BS')) {
+      clearForm();
+      return;
+    }
+
+    try {
+      const items = cart.map(item => {
+        if (!item || !item.product) {
+          throw new Error('Invalid cart item');
+        }
+        return {
+          productId: item.product.id,
+          productName: item.product.name,
+          price: item.product.price,
+          quantity: item.quantity
+        };
+      });
+
+      const orderData = {
+        fullName: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        address: formData.address,
+        city: formData.city,
+        postalCode: postalCode,
+        country: formData.country,
+        items: items,
+        total: getTotal()
+      };
+
+      console.log('Sending order data:', orderData);
+
+      const response = await fetch('http://localhost:3085/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to place order');
+      }
+
+      const result = await response.json();
+      alert('Order placed successfully!');
+      navigate('/page3');
+    } catch (error) {
+      console.error('Error placing order:', error);
+      alert(`Failed to place order: ${error instanceof Error ? error.message : 'Please try again.'}`);
+    }
+  };
+
+  if (cart.length === 0) {
+    return (
+      <div className="checkoutPage">
+        <h1>Checkout</h1>
+        <p>Your cart is empty. Please add items to your cart first.</p>
+        <button onClick={() => navigate('/page3')} className="backToShopBtn">
+          Back to Shop
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="checkoutPage">
+      <h1>Checkout</h1>
+      <div className="checkoutContainer">
+        <div className="orderSummary">
+          <h2>Order Summary</h2>
+          <div className="orderItems">
+            {cart.map(item => {
+              if (!item || !item.product) {
+                return null;
+              }
+              return (
+                <div key={item.product.id} className="orderItem">
+                  <span className="orderItemName">{item.product.name}</span>
+                  <span className="orderItemQuantity">x{item.quantity}</span>
+                  <span className="orderItemPrice">
+                    £{(item.product.price * item.quantity).toFixed(2)}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+          <div className="orderTotal">
+            <strong>Total: £{getTotal().toFixed(2)}</strong>
+          </div>
+        </div>
+        <div className="checkoutForm">
+          <h2>Shipping Information</h2>
+          <form onSubmit={handlePlaceOrder}>
+            <div className="formGroup">
+              <label>Full Name</label>
+              <input 
+                type="text" 
+                name="fullName"
+                value={formData.fullName}
+                onChange={handleInputChange}
+                required 
+              />
+            </div>
+            <div className="formGroup">
+              <label>Email</label>
+              <input 
+                type="email" 
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                required 
+              />
+            </div>
+            <div className="formGroup">
+              <label>Phone Number</label>
+              <input 
+                type="tel" 
+                name="phone"
+                value={formData.phone}
+                onChange={handleInputChange}
+                required 
+              />
+            </div>
+            <div className="formGroup">
+              <label>Address</label>
+              <input 
+                type="text" 
+                name="address"
+                value={formData.address}
+                onChange={handleInputChange}
+                required 
+              />
+            </div>
+            <div className="formGroup">
+              <label>City</label>
+              <input 
+                type="text" 
+                name="city"
+                value={formData.city}
+                onChange={handleInputChange}
+                required 
+              />
+            </div>
+            <div className="formGroup">
+              <label>Postal Code</label>
+              <input 
+                type="text" 
+                value={postalCode}
+                onChange={handlePostalCodeChange}
+                required 
+                placeholder="e.g., SW1A 1AA, M1 1AA"
+              />
+              {postalCodeError && <span className="errorMessage">{postalCodeError}</span>}
+            </div>
+            <div className="formGroup">
+              <label>Country</label>
+              <input 
+                type="text" 
+                name="country"
+                value={formData.country}
+                onChange={handleInputChange}
+                required 
+              />
+            </div>
+            <div className="formActions">
+              <button type="button" onClick={() => navigate('/page3')} className="cancelBtn">
+                Cancel
+              </button>
+              <button type="submit" className="placeOrderBtn">
+                Place Order
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Checkout;
+

@@ -1,0 +1,38 @@
+.aboutUsPage {
+  padding: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.aboutUsPage h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #333;
+}
+
+.aboutContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.aboutSection {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.aboutSection h2 {
+  margin: 0 0 1rem 0;
+  color: #007bff;
+  font-size: 1.5rem;
+}
+
+.aboutSection p {
+  margin: 0;
+  color: #555;
+  line-height: 1.6;
+  font-size: 1.1rem;
+}
+

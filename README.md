@@ -61,7 +61,24 @@ Access the application at: `http://localhost:4085`
 
 - **Page 2**: Drag and drop interface with two frames. Three colored blocks can be dragged between frames.
 
-- **Page 3**: Basic page with popup functionality.
+- **Page 3**: Shop with 10 products, shopping cart, and checkout functionality.
+
+## Allowed Delivery Areas
+
+Delivery is only available to the following UK cities (based on postcode outward code):
+
+1. **London** - SW, SE, NW, N, E, W, EC, WC
+2. **Manchester** - M
+3. **Birmingham** - B
+4. **Liverpool** - L
+5. **Leeds** - LS
+6. **Glasgow** - G
+7. **Edinburgh** - EH
+8. **Bristol** - BS
+9. **Sheffield** - S
+10. **Newcastle** - NE
+
+The checkout page validates the first part of the UK postcode (outward code) against these areas.
 
 ## Project Structure
 
@@ -76,3 +93,4 @@ qa_ai_playground/
 └── README.md
 ```
 
+## MongoDB 

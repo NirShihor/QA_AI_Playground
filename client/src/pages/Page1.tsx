@@ -30,30 +30,43 @@ const Page1 = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    if (name === 'email') {
-      return;
-    }
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert(`Form submitted successfully for ${formData.firstName} ${formData.lastName}!`);
-    setIsPopupOpen(false);
-    setFormData({
-      firstName: '',
-      lastName: '',
-      address1: '',
-      address2: '',
-      city: '',
-      county: '',
-      country: '',
-      phoneNumber: '',
-      email: formData.email  // Bug: email field is not cleared
-    });
+    try {
+      const response = await fetch('http://localhost:3085/api/user-details', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save user details');
+      }
+
+      setIsPopupOpen(false);
+      setFormData({
+        firstName: '',
+        lastName: '',
+        address1: '',
+        address2: '',
+        city: '',
+        county: '',
+        country: '',
+        phoneNumber: '',
+        email: ''
+      });
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('Failed to save user details. Please try again.');
+    }
   };
 
   return (
@@ -63,7 +76,7 @@ const Page1 = () => {
       <Popup
         isOpen={isPopupOpen}
         onClose={() => setIsPopupOpen(false)}
-        title="Page 1 Form"
+        title="User Details"
       >
         <form className="page1Form" onSubmit={handleSubmit}>
           <div className="formRow">

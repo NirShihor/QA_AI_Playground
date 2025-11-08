@@ -7,7 +7,10 @@ const MenuBar = () => {
   return (
     <nav className="menuBar">
       <div className="menuBarContainer">
-        <Link to="/page1" className={location.pathname === '/page1' || location.pathname === '/' ? 'active' : ''}>
+        <Link to="/" className={location.pathname === '/' ? 'active' : ''}>
+          Home
+        </Link>
+        <Link to="/page1" className={location.pathname === '/page1' ? 'active' : ''}>
           Page 1
         </Link>
         <Link to="/page2" className={location.pathname === '/page2' ? 'active' : ''}>
@@ -15,6 +18,9 @@ const MenuBar = () => {
         </Link>
         <Link to="/page3" className={location.pathname === '/page3' ? 'active' : ''}>
           Page 3
+        </Link>
+        <Link to="/about" className={location.pathname === '/about' ? 'active' : ''}>
+          About Us
         </Link>
       </div>
     </nav>

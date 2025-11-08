@@ -1,0 +1,39 @@
+.buttonContainer {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+.buttonContainer button {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.buttonContainer button:hover {
+  background-color: #0056b3;
+}
+
+.buttonContainer button:active {
+  transform: scale(0.98);
+}
+
+.imageContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2rem 0;
+}
+
+.imageContainer img {
+  width: 70%;
+  height: auto;
+  max-width: 100%;
+}
+
